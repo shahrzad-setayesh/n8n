@@ -1,0 +1,467 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "register",
+        "formDescription": "information of customes ",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "نام"
+            },
+            {
+              "fieldLabel": "نام خانوادگی"
+            },
+            {
+              "fieldLabel": "ایمیل",
+              "fieldType": "email"
+            },
+            {
+              "fieldLabel": "سرمایه",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "0-100"
+                  },
+                  {
+                    "option": "100-300"
+                  },
+                  {
+                    "option": "300+"
+                  }
+                ]
+              }
+            },
+            {
+              "fieldLabel": "پیام"
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        -752,
+        -32
+      ],
+      "id": "ea00c4cb-947f-4893-b5bd-a5933eacdb26",
+      "name": "On form submission",
+      "webhookId": "4050b3e6-0cf3-4f87-92de-0486f30777b7"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1MCgXR_x2vjIeIHNyiEQCSVKW_FMRFEkocvCvYjIdbz8",
+          "mode": "list",
+          "cachedResultName": "register  customer",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MCgXR_x2vjIeIHNyiEQCSVKW_FMRFEkocvCvYjIdbz8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "info",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MCgXR_x2vjIeIHNyiEQCSVKW_FMRFEkocvCvYjIdbz8/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ایمیل": "={{ $json['ایمیل'] }}",
+            "نام": "={{ $json['نام'] }}",
+            "فامیل": "={{ $json['نام خانوادگی'] }}",
+            "سرمایه": "={{ $json['سرمایه'] }}",
+            "پیام": "={{ $json['پیام'] }}",
+            " تاریخ": "={{ $now }}",
+            "رد شدن ": "={{ $if(\"$json['سرمایه']\"==+300,\"true\",\"false\") }}"
+          },
+          "matchingColumns": [
+            "ایمیل"
+          ],
+          "schema": [
+            {
+              "id": "نام",
+              "displayName": "نام",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "فامیل",
+              "displayName": "فامیل",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ایمیل",
+              "displayName": "ایمیل",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "سرمایه",
+              "displayName": "سرمایه",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "پیام",
+              "displayName": "پیام",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "رد شدن ",
+              "displayName": "رد شدن ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": " تاریخ",
+              "displayName": " تاریخ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -544,
+        -32
+      ],
+      "id": "e55c2b68-a6f9-4a35-a1e1-46f1287ee3d6",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "z67T3c5n6kLJcOoP",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "9cf0f508-5605-4ae9-ae2f-74944ddd14e3",
+              "leftValue": "={{ $json['سرمایه'] }}",
+              "rightValue": "300+",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "b5242af7-f038-4499-b033-6094b99d1193",
+              "leftValue": "={{ $json['سرمایه'] }}",
+              "rightValue": "100-300",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -336,
+        -32
+      ],
+      "id": "3baf6aaa-2318-4b6e-a7e0-4fe863020984",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json['سرمایه'] }}",
+                    "rightValue": "300+",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "89c3495e-5380-4ed0-8b4a-ce2722fdd587"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "822d02c2-eea2-4044-a70a-5b246124ff40",
+                    "leftValue": "={{ $json['سرمایه'] }}",
+                    "rightValue": "100-300",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -144,
+        -32
+      ],
+      "id": "175ee718-c065-40aa-9184-702a4455686d",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json['ایمیل'] }}",
+        "subject": "thank you for register in my compony",
+        "emailType": "text",
+        "message": "= سلام  {{ $json['نام'] }}  {{ $json['سرمایه'] }}متشکرم که سرمایه  در تاریخ \n{{ $json[' تاریخ'] }} در شرکت ما اوردی",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        48,
+        96
+      ],
+      "id": "01025a8c-2d45-49cf-ab3a-d64614e36020",
+      "name": "Send a message1",
+      "webhookId": "f244c0c3-fa45-4a72-a31c-e5bf68686cd2",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "It8HN0q5IVpLGCFp",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json['ایمیل'] }}",
+        "subject": "thank you for register in my compony",
+        "emailType": "text",
+        "message": "= سلام  {{ $json['نام'] }}  \n{{ $json['فامیل'] }}\nمتشکریم",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        32,
+        -144
+      ],
+      "id": "7ffa18a9-292c-4d40-ac0f-956246571f98",
+      "name": "Send a message2",
+      "webhookId": "f244c0c3-fa45-4a72-a31c-e5bf68686cd2",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "It8HN0q5IVpLGCFp",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        256,
+        0
+      ],
+      "id": "9472b63f-64e1-4dbc-b01d-c5f2314b50af",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "sendTo": "shahrzad.setayesh@gmail.com",
+        "subject": "list customer register",
+        "emailType": "text",
+        "message": "={{ $('On form submission').item.json['نام'] }}\n{{ $('On form submission').item.json['سرمایه'] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        464,
+        0
+      ],
+      "id": "536fedc8-747f-467c-9e98-acad795f20a2",
+      "name": "Send a message",
+      "webhookId": "ed5d285a-e147-4bc9-ba9f-f19b65d30fec",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "It8HN0q5IVpLGCFp",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Send a message2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Send a message2": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "d8f3f2d6-7f0e-492b-a317-577f698d0b03",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b8d785470f7d1ae2ef2193ae82cfeb2221bca17f035e640f9f2551d2bd0d18eb"
+  },
+  "id": "TAmIBiaNSBSnUUXN",
+  "tags": []
+}

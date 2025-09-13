@@ -1,0 +1,171 @@
+{
+  "name": "webscrapping and telegram bot encouragment text ai agent to buy",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -432,
+        -96
+      ],
+      "id": "51afb598-707a-4cf0-8cb3-e325ee896f3a",
+      "name": "Telegram Trigger",
+      "webhookId": "5c8a21a3-e30d-45a0-87a4-f088010dcc91",
+      "credentials": {
+        "telegramApi": {
+          "id": "bn64yWvoInU6ocMa",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "extraction",
+        "operation": "query",
+        "sessionMode": "new",
+        "url": "https://bimema.ir/",
+        "prompt": "اطلاعات بیمه ی را از این سایت پیدا کن و به کاربر پاسخ بر اساس این سایت بده",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.airtop",
+      "typeVersion": 1,
+      "position": [
+        -208,
+        -96
+      ],
+      "id": "9c8f839d-45be-4e70-92a9-efc58ae648f4",
+      "name": "Query page",
+      "credentials": {
+        "airtopApi": {
+          "id": "VW9U8G12runntJ5L",
+          "name": "Airtop account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "167009197",
+        "text": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        352,
+        -96
+      ],
+      "id": "e5cdf79f-72f7-45cc-8422-ef566571f029",
+      "name": "Send a text message",
+      "webhookId": "30afd2a9-e1fe-4114-b5b7-36d13e0aee29",
+      "credentials": {
+        "telegramApi": {
+          "id": "bn64yWvoInU6ocMa",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.data.modelResponse }}\n خلاصه کن و متنی اضافه کن که کاربر به داشتن این بیمه را با مثال و روشهای جذب مشتری نیازمندی را در کاربر ایجاد کن که حتما تشویق به بیمه کردن خودش شود ",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        -96
+      ],
+      "id": "db0d052a-5f0b-44f8-a8f8-36a300a84188",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -144,
+        112
+      ],
+      "id": "2e3b04be-0a48-4321-89e2-c4b24022c45a",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "xVKaOIfhrOLoNoV3",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Query page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Query page": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "5cdeccea-0f1f-4e01-a4ef-8584beb03afb",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b8d785470f7d1ae2ef2193ae82cfeb2221bca17f035e640f9f2551d2bd0d18eb"
+  },
+  "id": "Pg8WgpWOU93YbaSI",
+  "tags": []
+}

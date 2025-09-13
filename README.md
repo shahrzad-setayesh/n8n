@@ -5,3 +5,6 @@ and send email to them  base on group message and merge all customer send to adm
 
  ورک فلویی که اطلاعات مشتریان را در فرمی از اطلاعات میگیرد و در گوگل شیت شرکت ذخیره کرده و براساس ایمیل هم واحد بودن چک میشود
  سپس براساس سرمایه هر مشتری فیلتر میشوند و برای انهایی ایمیلی ارسال شده و سپس همه مشتریانی که در گروه های مختلف هستند ترکیب شده و برای رِیس شرکت ارسال میگردد 
+
+
+<img width="2232" height="978" alt="image" src="https://github.com/user-attachments/assets/395fda15-b2d6-4cca-8ab9-faaae49a8eab" />

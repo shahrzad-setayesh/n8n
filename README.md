@@ -21,3 +21,17 @@ post generate for site eveyday 8am
 send post with search google and summarize with chat gpt  every day on 8am 
 
 <img width="1934" height="741" alt="image" src="https://github.com/user-attachments/assets/e23918c8-2c41-4604-936f-8c17c72f73ca" />
+
+
+
+
+
+  فایل duty work add in calendar and google sheet with ai agent chat
+
+  ساخت چت بار هوشمندیی که اطلاعات روزانه  و کارها و ملاقاتهای روزانه را به ان اعلام میکنیم واتوماتد وارد تقویم و گوگل  شیت میکند و تغییر و آپدیت کردن اطلاعات را هرزمان ایجنت تغییراتی که کاربر بخواهد تغییر کند 
+
+
+
+  <img width="2021" height="871" alt="Screenshot 2025-09-22 185844" src="https://github.com/user-attachments/assets/aff867b7-8200-4dbd-bf86-0166fcad1921" />
+
+  

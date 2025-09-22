@@ -1,0 +1,491 @@
+{
+  "name": "duty work add in calendar and google sheet with ai agent chat",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -16,
+        -64
+      ],
+      "id": "1d395aac-8923-4b59-a5da-3b5593ac1a06",
+      "name": "When chat message received",
+      "webhookId": "b407fe41-4423-49fe-bc52-34d2d295e151"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=تو یک دستیار کمک کننده هستی که به مدیریت رویدادهای تقویم کمک می‌کند.\nاطلاعات تقویم را برای کاربران مدیریت کن.\nتاریخ فعلی: {{$now}}\nهر زمانی که درخواست ایجاد یک کار توسط کاربرد شد\nهم در کلندر ثبت کن و هم در گوگل شیت\nاطلاعات گوگل شیت را با توجه به سوال خودت پر کن\n\n\n- برای آپدیت یک رویداد در گوگل شیت:\n  1. ابتدا از ابزار 'Get row(s) in sheet in Google Sheets' برای پیدا کردن دقیق رکورد بر اساس 'نام کار' یا 'تاریخ سررسید' یا هر فیلد یکتای دیگر استفاده کن.\n  2. پس از پیدا کردن رکورد، 'row_number' آن رکورد را استخراج کن.\n  3. سپس از ابزار 'Update row in sheet in Google Sheets' استفاده کن و 'row_number' استخراج شده را به آن پاس بده تا رکورد صحیح آپدیت شود.\n  4. اگر رکورد مورد نظر پیدا نشد، به کاربر اطلاع بده.\n\nقواعد مهم:\n- اگر کاربر زمانی مثل \"امروز\"، \"فردا\"، \"پس فردا\"، \"هفته بعد\"، \"دیروز\"، \"پریروز\" یا \"هفته قبل\" را ذکر کرد، آن را به تاریخ میلادی دقیق تبدیل کن.\n- برای \"امروز\": از ابتدای امروز (00:00:00) تا انتهای امروز (23:59:59) استفاده کن.\n- برای \"فردا\": از ابتدای فردا (00:00:00) تا انتهای فردا (23:59:59) استفاده کن.\n- برای \"هفته بعد\": از ابتدای اولین روز هفته آینده (مثلاً دوشنبه 00:00:00) تا انتهای آخرین روز هفته آینده (یکشنبه 23:59:59) استفاده کن.\n- اگر کاربر تاریخ یا ساعت دقیقی ارائه نداد اما هدفش مشخص بود (مثلاً \"برنامه های فردام رو بگو\")، سعی کن زمان شروع را 00:00:00 و زمان پایان را 23:59:59 همان روز در نظر بگیری.\n- همیشه تاریخ و ساعت را به فرمت ISO 8601 (YYYY-MM-DDTHH:mm:ssZ) برای ابزارهای تقویم فراهم کن.\n- اگر برای ایجاد رویداد (Create an event) اطلاعات کافی (عنوان، تاریخ شروع و پایان) نداری، از کاربر اطلاعات دقیق‌تر را بپرس. اما اگر برای جستجو (Get many events) فقط یک روز یا یک دوره کلی (مثل \"فردا\") مطرح شد، سعی کن محدوده را خودت تکمیل کنی.\n- قبل از آپدیت گوگل شیت اول رکورد مورد نظر را پیدا کن"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        432,
+        -96
+      ],
+      "id": "241c8d7a-931d-43d1-9e83-464de45cc793",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 7
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        112,
+        144
+      ],
+      "id": "7ce70e33-59da-4fb2-a774-dc84679c2e46",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "shahrzad.setayesh88@gmail.com",
+          "mode": "list",
+          "cachedResultName": "shahrzad.setayesh88@gmail.com"
+        },
+        "start": "={{ $fromAI(\"startTime\",\"This is the start time of the event\") }}",
+        "end": "={{ $fromAI(\"endTime\",\"This is the end time of the event\") }}",
+        "additionalFields": {
+          "summary": "={{ $fromAI(\"summary\",\"This is the summary/title of the event\") }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        288,
+        160
+      ],
+      "id": "46d4cf7b-225f-4ae9-8226-a6ea6acf4f83",
+      "name": "Create an event in Google Calendar",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "fl3DcGsVTRTrLkpf",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1t4Gt6wLyFLKLf8ZLphVpeLVl4FVRhZAChSE6zwug1pc",
+          "mode": "list",
+          "cachedResultName": " daily works",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1t4Gt6wLyFLKLf8ZLphVpeLVl4FVRhZAChSE6zwug1pc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1t4Gt6wLyFLKLf8ZLphVpeLVl4FVRhZAChSE6zwug1pc/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "توضیح": "={{ $fromAI(\"taskDescribe\",\"this is the describe of the task\") }}",
+            "تاریخ سررسید": "={{ $fromAI(\"taskDuedate\",\"this is the Due date of the task\") }}",
+            "نام کار": "={{ $fromAI(\"taskName\",\"this is the Name of the task\") }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "نام کار",
+              "displayName": "نام کار",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "توضیح",
+              "displayName": "توضیح",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "تاریخ سررسید",
+              "displayName": "تاریخ سررسید",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.6,
+      "position": [
+        464,
+        160
+      ],
+      "id": "59c648eb-319e-462e-a9bd-c68f01a486ec",
+      "name": "Append row in sheet in Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "WdwmkrnkGg61JsPo",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1t4Gt6wLyFLKLf8ZLphVpeLVl4FVRhZAChSE6zwug1pc",
+          "mode": "list",
+          "cachedResultName": " daily works",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1t4Gt6wLyFLKLf8ZLphVpeLVl4FVRhZAChSE6zwug1pc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1t4Gt6wLyFLKLf8ZLphVpeLVl4FVRhZAChSE6zwug1pc/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "تاریخ سررسید",
+              "lookupValue": "={{ $fromAI(\"dueDate\",\"the date of the task is due on\") }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.6,
+      "position": [
+        656,
+        160
+      ],
+      "id": "d3c0a7db-31f9-4c79-8e32-69dee1f30ea7",
+      "name": "Get row(s) in sheet in Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "WdwmkrnkGg61JsPo",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Append or update row in sheet in Google Sheets",
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1t4Gt6wLyFLKLf8ZLphVpeLVl4FVRhZAChSE6zwug1pc",
+          "mode": "list",
+          "cachedResultName": " daily works",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1t4Gt6wLyFLKLf8ZLphVpeLVl4FVRhZAChSE6zwug1pc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1B_u_B-ip6sG_7DTzhwpEprW2nm21Urrb5DUkXXoqlVA/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "نام کار": "={{ $fromAI(\"taskName\",\"this is the Name of the task\") }}",
+            "توضیح": "={{ $fromAI(\"taskDescribe\",\"this is the describe of the task\") }}",
+            "تاریخ سررسید": "={{ $fromAI(\"taskDuedate\",\"this is the Due date of the task\") }}",
+            "اولویت": "={{ $fromAI(\"taskPriority\",\"this is the Priority of the task\") }}"
+          },
+          "matchingColumns": [
+            "تاریخ سررسید"
+          ],
+          "schema": [
+            {
+              "id": "نام کار",
+              "displayName": "نام کار",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "توضیح",
+              "displayName": "توضیح",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "تاریخ سررسید",
+              "displayName": "تاریخ سررسید",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "اولویت",
+              "displayName": "اولویت",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.6,
+      "position": [
+        848,
+        160
+      ],
+      "id": "c96cc33c-b9e5-48a7-96d0-44e7b5471864",
+      "name": "Append or update row in sheet in Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "WdwmkrnkGg61JsPo",
+          "name": "Google Sheets account 2"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -64,
+        128
+      ],
+      "id": "d2fdb89f-5045-49bd-af67-09937a582fa9",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "xVKaOIfhrOLoNoV3",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "shahrzad.setayesh88@gmail.com",
+          "mode": "list",
+          "cachedResultName": "shahrzad.setayesh88@gmail.com"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        976,
+        208
+      ],
+      "id": "ba2d4681-dade-4cd2-a20f-d6d3000abf69",
+      "name": "Get many events in Google Calendar",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "k8vZwTc8xYwpl3SJ",
+          "name": "Google Calendar account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "shahrzad.setayesh88@gmail.com",
+          "mode": "list",
+          "cachedResultName": "shahrzad.setayesh88@gmail.com"
+        },
+        "start": "={{ $fromAI(\"afterDate\",\"The start date and time (ISO 8601) for searching events. If the user asks for 'tomorrow's events', this should be tomorrow at 00:00:00.\") }}",
+        "end": "={{ $fromAI(\"beforeDate\",\"The end date and time (ISO 8601) for searching events. If the user asks for 'tomorrow's events', this should be tomorrow at 23:59:59.\") }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        560,
+        240
+      ],
+      "id": "2f31ba71-c21e-43a7-927d-6bde4a30eaa6",
+      "name": "Create an event in Google Calendar3",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "RihQzDQwVKiTZZxF",
+          "name": "Google Calendar account 3"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create an event in Google Calendar": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many events in Google Calendar": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create an event in Google Calendar3": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "17def83a-8230-4853-aa60-84a41d188576",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b8d785470f7d1ae2ef2193ae82cfeb2221bca17f035e640f9f2551d2bd0d18eb"
+  },
+  "id": "hYaTSMzMv1Y2CaHR",
+  "tags": []
+}

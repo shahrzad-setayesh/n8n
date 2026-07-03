@@ -1,4 +1,15 @@
 # n8n
+ 
+ analize image bank payment reception with gemeni 2.5 flash and extract information of reception and append in google sheet or  send telegram admin
+
+ <img width="2280" height="844" alt="image" src="https://github.com/user-attachments/assets/6c3585b1-f262-41dc-8246-9562acd162c5" />
+
+ 
+ 
+ 
+ 
+ 
+ 
  scraping instagram and send to telegram admin  at 8 am with comment and number of like 
 
  

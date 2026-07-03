@@ -1,0 +1,383 @@
+{
+  "name": "scrapping insta",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "https://api.scrapingdog.com/instagram/posts",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "api_key",
+              "value": "6a441352c83d265de07d3945"
+            },
+            {
+              "name": "id",
+              "value": "78571022283"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -304,
+        -80
+      ],
+      "id": "a50a1c9c-fffa-4b38-b64d-6d7a030b558e",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "posts_data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -96,
+        -80
+      ],
+      "id": "cb1c0332-d150-43cc-9bf8-4a30fa0a570c",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        96,
+        -80
+      ],
+      "id": "973067db-b8c2-49fa-8505-37c99b140165",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.video_url }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        496,
+        -144
+      ],
+      "id": "1c6dcd91-9b9a-41ad-bf0d-099d9a65aa99",
+      "name": "HTTP Request2"
+    },
+    {
+      "parameters": {
+        "operation": "sendVideo",
+        "chatId": "167009197 ",
+        "binaryData": true,
+        "additionalFields": {
+          "caption": "={{ $json.caption }}"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        688,
+        -144
+      ],
+      "id": "20929e21-0839-447b-88c1-b2d263b5b545",
+      "name": "Send a video",
+      "webhookId": "58bc9280-7d59-4b9f-a5e4-50fa0d078934",
+      "credentials": {
+        "telegramApi": {
+          "id": "Za6eU50nXgPam8vd",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "dba2da91-dc00-4ce8-9c47-490f3c129911",
+              "leftValue": "={{ $json.is_video }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        304,
+        -80
+      ],
+      "id": "3d761c8d-9297-464b-a36e-82361e60efb4",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "sendPhoto",
+        "chatId": "167009197 ",
+        "binaryData": true,
+        "additionalFields": {
+          "caption": "={{ $json.caption }}"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        720,
+        64
+      ],
+      "id": "71af940c-71b0-4e9a-94a3-6303febf2108",
+      "name": "Send a photo message",
+      "webhookId": "58bc9280-7d59-4b9f-a5e4-50fa0d078934",
+      "credentials": {
+        "telegramApi": {
+          "id": "Za6eU50nXgPam8vd",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.display_url }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        496,
+        64
+      ],
+      "id": "bbe36d27-c3cb-483b-819a-123873dab1da",
+      "name": "HTTP Request3"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -544,
+        -80
+      ],
+      "id": "c0e7b4e1-91db-4970-b599-073fb0520af8",
+      "name": "Schedule Trigger"
+    }
+  ],
+  "pinData": {
+    "HTTP Request": [
+      {
+        "json": {
+          "total_posts": 4,
+          "posts_data": [
+            {
+              "id": "3933209121664832637",
+              "shortcode": "DaVkNtsKJR9",
+              "display_url": "https://instagram.frix9-1.fna.fbcdn.net/v/t51.71878-15/732910664_1937765927180108_6562156385401680994_n.jpg?stp=dst-jpg_e15_tt6&_nc_ht=instagram.frix9-1.fna.fbcdn.net&_nc_cat=108&_nc_oc=Q6cZ2gHAgdBrpX0KHglwuwDU76xi7o-QLJywR7N5wF-eV5RHpEdX8HwF8VRKiXQ6UShhiSA&_nc_ohc=4X6yk0d0CYUQ7kNvwF7yFBp&_nc_gid=AxhFcW7TtdCY8LnC9vEQtA&edm=APU89FABAAAA&ccb=7-5&oh=00_AQCM1hxo9KDfFAnXW6ygLeD7Fzi5--klzhQBFcmAzcMFaQ&oe=6A4DD9E3&_nc_sid=bc0c2c",
+              "owner": {
+                "id": "78571022283",
+                "username": "ai_training_shiraz"
+              },
+              "is_video": true,
+              "has_audio": true,
+              "video_url": "https://instagram.frix9-1.fna.fbcdn.net/o1/v/t2/f2/m86/AQM3C0pSBgPKXAkZ0Qr4VC3966wHKKSJkMTxVTxaQMnyxfFFC_h4odrqFANGQZH7PW8iQl5APS4Y2gph7tzSbpXmPbVMyoTnFp46Zjc.mp4?_nc_cat=104&_nc_oc=AdpSZ3n2WRUvOASFxpAOUYcmCY8PKDT7hLcPSCLDxUa5PdiAMdXY_0kowlZC12-DFsI&_nc_sid=5e9851&_nc_ht=instagram.frix9-1.fna.fbcdn.net&_nc_ohc=PqTyl-a4ujsQ7kNvwEnwwgr&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5JTlNUQUdSQU0uQ0xJUFMuQzMuODQ4LmRhc2hfYmFzZWxpbmVfMV92MSIsInhwdl9hc3NldF9pZCI6MTAwMDk1MTQ4OTQ2OTkwNiwiYXNzZXRfYWdlX2RheXMiOjAsInZpX3VzZWNhc2VfaWQiOjEwMDk5LCJkdXJhdGlvbl9zIjoxNSwidXJsZ2VuX3NvdXJjZSI6Ind3dyJ9&ccb=17-1&vs=7cf195326dd8471b&_nc_vs=HBksFQIYUmlnX3hwdl9yZWVsc19wZXJtYW5lbnRfc3JfcHJvZC83QTRGQTcyM0YxOTk2MEQ3MDI3MzBDMjVEOTk4Qzc5OV92aWRlb19kYXNoaW5pdC5tcDQVAALIARIAFQIYUWlnX3hwdl9wbGFjZW1lbnRfcGVybWFuZW50X3YyL0IwNEUwRDVCNDkxMkVEOEE5Njk1RUNEMjUwRUY5MjgwX2F1ZGlvX2Rhc2hpbml0Lm1wNBUCAsgBEgAoABgAGwKIB3VzZV9vaWwBMRJwcm9ncmVzc2l2ZV9yZWNpcGUBMRUAACak97zfhZfHAxUCKAJDMywXQC6qfvnbItEYEmRhc2hfYmFzZWxpbmVfMV92MREAdf4HZeadAQA&_nc_gid=AxhFcW7TtdCY8LnC9vEQtA&_nc_ss=7a22e&_nc_zt=28&oh=00_AQCQUJwXxPaApTJ9A277Me304ktGG8GionOT7Cs1Iqeepw&oe=6A49B541",
+              "caption": "اموزش ساخت تیزرهای متفاوت تبلیغاتی\n فقط با تیم هوشمندسازی ستایش",
+              "comment": 0,
+              "likes": 0,
+              "location": null,
+              "coauthor_producers": [],
+              "pinned_for_users": [],
+              "video_view_count": 1,
+              "thumbnail": "https://instagram.frix9-1.fna.fbcdn.net/v/t51.71878-15/732910664_1937765927180108_6562156385401680994_n.jpg?stp=c133.0.374.374a_dst-jpg_e15_tt6&_nc_ht=instagram.frix9-1.fna.fbcdn.net&_nc_cat=108&_nc_oc=Q6cZ2gHAgdBrpX0KHglwuwDU76xi7o-QLJywR7N5wF-eV5RHpEdX8HwF8VRKiXQ6UShhiSA&_nc_ohc=4X6yk0d0CYUQ7kNvwF7yFBp&_nc_gid=AxhFcW7TtdCY8LnC9vEQtA&edm=APU89FABAAAA&ccb=7-5&oh=00_AQAAICWPnSMGdKgObX_finXI0B4toqsABVftOVtN-QVeuQ&oe=6A4DD9E3&_nc_sid=bc0c2c",
+              "timestamp": 1783095140
+            },
+            {
+              "id": "3933203655540541218",
+              "shortcode": "DaVi-K9wwci",
+              "display_url": "https://instagram.frix9-1.fna.fbcdn.net/v/t51.71878-15/731465126_1416625190305712_8400209629031349809_n.jpg?stp=dst-jpg_e15_tt6&_nc_ht=instagram.frix9-1.fna.fbcdn.net&_nc_cat=108&_nc_oc=Q6cZ2gHAgdBrpX0KHglwuwDU76xi7o-QLJywR7N5wF-eV5RHpEdX8HwF8VRKiXQ6UShhiSA&_nc_ohc=hS84pas_3h4Q7kNvwHNMdXR&_nc_gid=AxhFcW7TtdCY8LnC9vEQtA&edm=APU89FABAAAA&ccb=7-5&oh=00_AQAHefbyxG2mSrSxjGi-MN0pQs3LEHsMEMgby2ioJ8jvSQ&oe=6A4DC083&_nc_sid=bc0c2c",
+              "owner": {
+                "id": "78571022283",
+                "username": "ai_training_shiraz"
+              },
+              "is_video": true,
+              "has_audio": false,
+              "video_url": "https://instagram.frix9-1.fna.fbcdn.net/o1/v/t2/f2/m86/AQOlswJs_A2EmO34mjYXr4A2K2tQpx-lYl1b6E9iEqoGgUOraibWJQl1izffjoEkSXymUUJDUfoZlUzQA93dUOdOqdaba1opwyW1NJ4.mp4?_nc_cat=111&_nc_oc=Ado6BfUoon4gcnTxEUHLLN1Kh_RzEIEciSA1m6XdyDIv93VQcPF4atoZZtW7CvMCuX0&_nc_sid=5e9851&_nc_ht=instagram.frix9-1.fna.fbcdn.net&_nc_ohc=dklxE3cCVkkQ7kNvwENxYxX&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5JTlNUQUdSQU0uQ0xJUFMuQzMuNzE2LmRhc2hfYmFzZWxpbmVfMV92MSIsInhwdl9hc3NldF9pZCI6MTcyODYyMjE0NDgwNTIwOCwiYXNzZXRfYWdlX2RheXMiOjAsInZpX3VzZWNhc2VfaWQiOjEwMDk5LCJkdXJhdGlvbl9zIjo1MywidXJsZ2VuX3NvdXJjZSI6Ind3dyJ9&ccb=17-1&vs=31cb261b610f4892&_nc_vs=HBksFQIYUmlnX3hwdl9yZWVsc19wZXJtYW5lbnRfc3JfcHJvZC83ODQxMkU1NjIzRUQ5MkJGN0YxMTMxREEyM0NEMUI4QV92aWRlb19kYXNoaW5pdC5tcDQVAALIARIAFQIYUWlnX3hwdl9wbGFjZW1lbnRfcGVybWFuZW50X3YyL0FGNDJGRDVBNTdFRTdGNUE4RDg3MUVDMUQxNzI2NUJBX2F1ZGlvX2Rhc2hpbml0Lm1wNBUCAsgBEgAoABgAGwKIB3VzZV9vaWwBMRJwcm9ncmVzc2l2ZV9yZWNpcGUBMRUAACaw5aLOhouSBhUCKAJDMywXQEq9cKPXCj0YEmRhc2hfYmFzZWxpbmVfMV92MREAdf4HZeadAQA&_nc_gid=AxhFcW7TtdCY8LnC9vEQtA&_nc_zt=28&_nc_ss=7a22e&oh=00_AQC09di7EVh9RQYeGAnTmt8mn3bnBWuTvTE47IkXD8RFgg&oe=6A49CC34",
+              "caption": "ربات  اتوماسیون  نوبت دهی ناخن \nنوشته شده توسط تیم  هوشمند سازی ستایش",
+              "comment": 0,
+              "likes": 0,
+              "location": null,
+              "coauthor_producers": [],
+              "pinned_for_users": [],
+              "video_view_count": 58,
+              "thumbnail": "https://instagram.frix9-1.fna.fbcdn.net/v/t51.71878-15/731465126_1416625190305712_8400209629031349809_n.jpg?stp=c0.249.640.640a_dst-jpg_e15_tt6&_nc_ht=instagram.frix9-1.fna.fbcdn.net&_nc_cat=108&_nc_oc=Q6cZ2gHAgdBrpX0KHglwuwDU76xi7o-QLJywR7N5wF-eV5RHpEdX8HwF8VRKiXQ6UShhiSA&_nc_ohc=hS84pas_3h4Q7kNvwHNMdXR&_nc_gid=AxhFcW7TtdCY8LnC9vEQtA&edm=APU89FABAAAA&ccb=7-5&oh=00_AQCS8qsakBTsJW4lugKaN6wC_QNkHDPjPWlupbX9SlmFwA&oe=6A4DC083&_nc_sid=bc0c2c",
+              "timestamp": 1783094615
+            },
+            {
+              "id": "3933038425565051467",
+              "shortcode": "DaU9ZwjxDpL",
+              "display_url": "https://instagram.frix9-1.fna.fbcdn.net/v/t51.82787-15/731650931_17872673601622284_528682609466017860_n.webp?stp=dst-jpg_e35_s1080x1080_sh2.08_tt6&_nc_ht=instagram.frix9-1.fna.fbcdn.net&_nc_cat=100&_nc_oc=Q6cZ2gHAgdBrpX0KHglwuwDU76xi7o-QLJywR7N5wF-eV5RHpEdX8HwF8VRKiXQ6UShhiSA&_nc_ohc=s306znuv6TEQ7kNvwE3ZoNL&_nc_gid=AxhFcW7TtdCY8LnC9vEQtA&edm=APU89FABAAAA&ccb=7-5&oh=00_AQCd5-zCa75UVdmghUbWhn9bo0VlSHXhOiQ3rFjV3mqv2Q&oe=6A4DC5C8&_nc_sid=bc0c2c",
+              "owner": {
+                "id": "78571022283",
+                "username": "ai_training_shiraz"
+              },
+              "is_video": false,
+              "caption": "هوشمند سازی ایده های خود را فقط در دوره های آموزشی تیم ما تجربه کنید🤖",
+              "comment": 0,
+              "likes": 0,
+              "location": null,
+              "coauthor_producers": [],
+              "pinned_for_users": [],
+              "thumbnail": "https://instagram.frix9-1.fna.fbcdn.net/v/t51.82787-15/731650931_17872673601622284_528682609466017860_n.webp?stp=dst-jpg_e35_s640x640_sh2.08_tt6&_nc_ht=instagram.frix9-1.fna.fbcdn.net&_nc_cat=100&_nc_oc=Q6cZ2gHAgdBrpX0KHglwuwDU76xi7o-QLJywR7N5wF-eV5RHpEdX8HwF8VRKiXQ6UShhiSA&_nc_ohc=s306znuv6TEQ7kNvwE3ZoNL&_nc_gid=AxhFcW7TtdCY8LnC9vEQtA&edm=APU89FABAAAA&ccb=7-5&oh=00_AQDJSqc2CaBp9zuIGVLbPbez8wqi-Qcj8lXvMg8mNYFY2w&oe=6A4DC5C8&_nc_sid=bc0c2c",
+              "timestamp": 1783074743
+            },
+            {
+              "id": "3933037846046504737",
+              "shortcode": "DaU9RU1xPch",
+              "display_url": "https://instagram.frix9-1.fna.fbcdn.net/v/t51.82787-15/731397625_17872673322622284_8150689598290503784_n.webp?stp=dst-jpg_e35_s1080x1080_sh2.08_tt6&_nc_ht=instagram.frix9-1.fna.fbcdn.net&_nc_cat=100&_nc_oc=Q6cZ2gHAgdBrpX0KHglwuwDU76xi7o-QLJywR7N5wF-eV5RHpEdX8HwF8VRKiXQ6UShhiSA&_nc_ohc=Plw8kwMtxq4Q7kNvwGH4r5o&_nc_gid=AxhFcW7TtdCY8LnC9vEQtA&edm=APU89FABAAAA&ccb=7-5&oh=00_AQACzhZLky8U734O_7yxgVcVvdt-4F6mA-vAsvi_s0zMjw&oe=6A4DB479&_nc_sid=bc0c2c",
+              "owner": {
+                "id": "78571022283",
+                "username": "ai_training_shiraz"
+              },
+              "is_video": false,
+              "caption": "هوشمند سازی ایده های خود را فقط در دوره های آموزشی تیم ما تجربه کنید",
+              "comment": 0,
+              "likes": 0,
+              "location": null,
+              "coauthor_producers": [],
+              "pinned_for_users": [],
+              "thumbnail": "https://instagram.frix9-1.fna.fbcdn.net/v/t51.82787-15/731397625_17872673322622284_8150689598290503784_n.webp?stp=dst-jpg_e35_s640x640_sh2.08_tt6&_nc_ht=instagram.frix9-1.fna.fbcdn.net&_nc_cat=100&_nc_oc=Q6cZ2gHAgdBrpX0KHglwuwDU76xi7o-QLJywR7N5wF-eV5RHpEdX8HwF8VRKiXQ6UShhiSA&_nc_ohc=Plw8kwMtxq4Q7kNvwGH4r5o&_nc_gid=AxhFcW7TtdCY8LnC9vEQtA&edm=APU89FABAAAA&ccb=7-5&oh=00_AQD1Zl8KWLyas1baA6KeXsLAfUag9QKPQebQpbeBiRM7Ug&oe=6A4DB479&_nc_sid=bc0c2c",
+              "timestamp": 1783074673
+            }
+          ],
+          "next_page_token": {
+            "has_next_page": false,
+            "token": ""
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "Send a video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request3": {
+      "main": [
+        [
+          {
+            "node": "Send a photo message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "0765caeb-5242-4601-a258-7d7b1c9ca695",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9c09efefcf0af9b63192cbfa589372ca9e4900b389585eb1eddb211c5c8da9c1"
+  },
+  "nodeGroups": [],
+  "id": "EP6aoUrEc5vi8OQj",
+  "tags": []
+}

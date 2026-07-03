@@ -1,0 +1,154 @@
+{
+  "name": "analize image rasid banki",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message",
+          "*"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -304,
+        -160
+      ],
+      "id": "93763aba-b726-49da-b83f-1f5b511cd0a3",
+      "name": "Telegram Trigger",
+      "webhookId": "a62b99f3-894e-4717-97cd-d424b5f1b155",
+      "credentials": {
+        "telegramApi": {
+          "id": "Za6eU50nXgPam8vd",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "text": "=عکس اگر مربوط به رسید پرداخت است را تحلیل کن و اطلاعات زیر را واکشی کن و اطلاعات را به صورت ساختار جیسون خالص خروجی بده و روی تعداد صفر های مبلغ دقت کن\nمثل\n{\nمبلغ انتقال:6000 ریال\nشماره پیگیری:45632\n تاریخ:3/4/1405\n}\n",
+        "inputType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        128,
+        -160
+      ],
+      "id": "140bb424-d8b4-43fc-a6a1-c372acd6d77f",
+      "name": "Analyze an image",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Va71LdhJy8JqVDHH",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.photo[1].file_id }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -96,
+        -160
+      ],
+      "id": "a7a92f10-4039-4edb-b1e5-e82f7a554ff5",
+      "name": "Get a file",
+      "webhookId": "cfcda5f9-1ff7-4630-9c93-6e5c90ab3bb2",
+      "credentials": {
+        "telegramApi": {
+          "id": "Za6eU50nXgPam8vd",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "=مبلغ:\n{{\nJSON.parse(\n  $json.content.parts[0].text\n    .replace(/^```json\\s*/i, \"\")\n    .replace(/```$/i, \"\")\n    .trim()\n)[\"مبلغ انتقال\"]\n}}\n\nتاریخ:\n{{\nJSON.parse(\n  $json.content.parts[0].text\n    .replace(/^```json\\s*/i, \"\")\n    .replace(/```$/i, \"\")\n    .trim()\n)[\"تاریخ\"]\n}}\n\nشماره تراکنش:\n{{\nJSON.parse(\n  $json.content.parts[0].text\n    .replace(/^```json\\s*/i, \"\")\n    .replace(/```$/i, \"\")\n    .trim()\n)[\"شماره پیگیری\"]\n}}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        416,
+        -160
+      ],
+      "id": "f6c290c7-2626-4cbb-b277-ad1b38c2a065",
+      "name": "Send a text message",
+      "webhookId": "27b78791-2c6f-49d9-a168-adf6c6d1c928",
+      "credentials": {
+        "telegramApi": {
+          "id": "Za6eU50nXgPam8vd",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get a file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a file": {
+      "main": [
+        [
+          {
+            "node": "Analyze an image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze an image": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "a8d38152-8c20-4456-a6c4-cbb23bf7e363",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9c09efefcf0af9b63192cbfa589372ca9e4900b389585eb1eddb211c5c8da9c1"
+  },
+  "nodeGroups": [],
+  "id": "RZQkKcEr0fmoSO7l",
+  "tags": []
+}

@@ -1,4 +1,18 @@
 # n8n
+ scraping instagram and send to telegram admin  at 8 am with comment and number of like 
+
+ 
+ <img width="1569" height="737" alt="image" src="https://github.com/user-attachments/assets/7c422aee-c9c1-4887-be31-7c29041579da" />
+
+
+
+
+
+
+
+
+
+
 n8n my workflow
 form register customers in googlesheet and use function condition and switch for group people from  their industery 
 and send email to them  base on group message and merge all customer send to admin which register on ever group
